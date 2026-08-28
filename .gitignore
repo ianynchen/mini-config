@@ -1,0 +1,28 @@
+# macOS noise
+.DS_Store
+
+# bootstrap backups of pre-existing files
+*.pre-dotfiles
+
+# credentials must never land here, even in a private repo
+**/auth.json
+**/hosts.yml
+**/id_rsa*
+**/id_ed25519*
+**/id_ecdsa*
+*.pem
+*.key
+**/known_hosts*
+**/.netrc
+
+# oh-my-zsh custom plugins/themes are git clones — bootstrap.sh re-clones them
+zsh/omz-custom/plugins/*/
+zsh/omz-custom/themes/*/
+
+# neovim local state that sometimes ends up under the config dir
+nvim/lazy-lock.json.bak
+nvim/.luarc.json
+
+# claude runtime state if it ever sneaks in
+claude/statsig/
+claude/telemetry/

@@ -1,0 +1,135 @@
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Homebrew Python: provides unversioned python/pip commands
+export PATH="$(brew --prefix python)/libexec/bin:$PATH"
+
+
+# -----------------------------
+# 1. Powerlevel10k instant prompt (top of file)
+# -----------------------------
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# -----------------------------
+# 2. Zinit plugin manager
+# -----------------------------
+ZINIT_DIR="$HOME/.local/share/zinit/zinit.git"
+
+if [[ ! -f "$ZINIT_DIR/zinit.zsh" ]]; then
+    echo "Installing Zinit..."
+    mkdir -p "$HOME/.local/share/zinit" && chmod g-rwX "$HOME/.local/share/zinit"
+    git clone https://github.com/zdharma-continuum/zinit "$ZINIT_DIR" \
+        && echo "Zinit installed" || echo "Zinit installation failed"
+fi
+
+if [[ -f "$ZINIT_DIR/zinit.zsh" ]]; then
+    source "$ZINIT_DIR/zinit.zsh"
+    autoload -Uz _zinit
+    (( ${+_comps} )) && _comps[zinit]=_zinit
+
+    # -----------------------------
+    # 3. Load Powerlevel10k first!
+    # -----------------------------
+    zinit light romkatv/powerlevel10k
+
+    # -----------------------------
+    # 4. Other Zinit plugins
+    # -----------------------------
+    zinit load zdharma-continuum/history-search-multi-word
+    zinit light zsh-users/zsh-autosuggestions
+    zinit light zdharma-continuum/fast-syntax-highlighting
+
+    # Optional snippet
+    zinit snippet https://gist.githubusercontent.com/hightemp/5071909/raw/
+fi
+# The gist snippet above aliases gh='git push', shadowing the GitHub CLI — undo that
+unalias gh 2>/dev/null
+
+# -----------------------------
+# 5. Source Powerlevel10k config
+# -----------------------------
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+# -----------------------------
+# 6. OpenSpec shell completions
+# -----------------------------
+fpath=("/Users/yining/.zsh/completions" $fpath)
+autoload -Uz compinit
+compinit
+
+# -----------------------------
+# 7. PATHs
+# -----------------------------
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export PATH="$PATH:/Users/yining/.local/bin"
+
+# -----------------------------
+# 8. Aliases
+# -----------------------------
+alias ls="eza --icons"
+alias claude-mem='bun "/Users/yining/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+# -----------------------------
+# 9. Optional external integrations
+# -----------------------------
+[[ -f "${HOME}/.iterm2_shell_integration.zsh" ]] && source "${HOME}/.iterm2_shell_integration.zsh"
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+# -----------------------------
+# 10. Options
+# -----------------------------
+setopt prompt_subst   # required by Powerlevel10k
+
+repush() {
+    local source="$1"
+    local target_registry="us-east1-docker.pkg.dev/loblaw-container-registry/ld-golden-images-staging"
+    local image_tag=$(echo "$source" | awk -F'/' '{print $NF}')  # just elixir:1.14-otp-25-alpine
+
+    docker pull --platform linux/amd64 "$source" &&
+    docker tag "$source" "${target_registry}/${image_tag}" &&
+    docker push "${target_registry}/${image_tag}"
+}
+
+# List images in GCP Artifact Registry
+list_images() {
+  local repo="ld-golden-images"
+  local filter=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo)   repo="$2";   shift 2 ;;
+      --filter) filter="$2"; shift 2 ;;
+      *)        filter="$1";  shift   # bare arg treated as filter
+    esac
+  done
+
+  local base="us-east1-docker.pkg.dev/loblaw-container-registry/${repo}"
+  local cmd=(gcloud artifacts docker images list "${base}" --project=loblaw-container-registry --include-tags --limit=unlimited --format="table(package, tags, format)")
+
+  [[ -n "$filter" ]] && cmd+=(--filter="package:${filter}")
+
+  "${cmd[@]}"
+}
+
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+HISTSIZE=100000
+SAVEHIST=100000
+
+alias awslocal="aws --endpoint-url=http://localhost:4566 --profile localstack"
+
+# >>> headroom persistent env >>>
+export HEADROOM_PORT="8787"
+export HEADROOM_HOST="127.0.0.1"
+export HEADROOM_MODE="cache"
+export HEADROOM_BACKEND="anthropic"
+export HEADROOM_TELEMETRY="off"
+export ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
+export ENABLE_TOOL_SEARCH="true"
+# <<< headroom persistent env <<<
+unalias go 2>/dev/null
+

@@ -1,0 +1,63 @@
+[user]
+    name = Yining Chen
+    email = ianynchen@gmail.com
+[fetch]
+    prune = true
+[pull]
+    ff = only
+[push]
+    autoSetupRemote = true
+[alias]
+    # Start a new feature branch off origin/main
+    start = "!f() { git fetch origin && git checkout -b \"$1\" origin/main; }; f"
+
+    # Sync current feature branch with origin/main
+    sync = "!git fetch origin && git rebase origin/main"
+
+    # Push current branch (handles first push and post-rebase force push)
+    up = "!git push --force-with-lease origin \"$(git branch --show-current)\""
+
+    # Cleanup: switch away from current branch and delete it
+    done = "!f() { branch=$(git branch --show-current); git checkout -; git branch -D \"$branch\"; }; f"
+
+    # Update local main to match origin/main (works whether on main or not)
+    sync-main = "!git fetch origin && git branch -f main origin/main"
+
+    # List local branches whose upstream has been deleted (post squash-merge cleanup)
+    stale = "!git branch --list --format '%(refname:short) %(upstream:track)' | grep '\\\\[gone\\\\]' | awk '{print $1}'"
+
+    # Bulk delete all stale branches
+    prune-local = "!git stale | xargs -r git branch -D"
+
+    # Pretty log with graph
+    lg = log --oneline --graph --all --decorate
+
+    hot-files = !git log --format=format: --name-only --since=\"1 year ago\" | sort | uniq -c | sort -nr | head -20
+    
+    rank = shortlog -sn --no-merges
+    
+    bug-magnets = !git log -i -E --grep=\"fix|bug|broken\" --name-only --format=\"\" | sort | uniq -c | sort -nr | head -20
+    
+    activity = !git log --format=\"%ad\" --date=format:\"%Y-%m\" | sort | uniq -c
+    
+    incidents = !git log --oneline --since=\"1 year ago\" | grep -iE \"revert|hotfix|emergency|rollback\"
+
+    # Squash the last N commits into one (interactive)
+    squash-last = "!f() { git rebase -i HEAD~$1; }; f"
+
+    # Squash everything since branching from main into one commit
+    squash-branch = "!f() { \
+        base=$(git merge-base HEAD main); \
+        git reset --soft $base && git commit; \
+    }; f"
+
+    # Same but with a message argument
+    squash-branch-m = "!f() { \
+        base=$(git merge-base HEAD main); \
+        git reset --soft $base && git commit -m \"$1\"; \
+    }; f"
+
+    # Squash last N into one commit with a message (no interactive editor)
+    squash-n = "!f() { \
+        git reset --soft HEAD~$1 && git commit -m \"$2\"; \
+    }; f"
