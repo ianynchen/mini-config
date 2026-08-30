@@ -68,8 +68,8 @@ export PATH="$PATH:/Users/yining/.local/bin"
 # -----------------------------
 # 8. Aliases
 # -----------------------------
-alias ls="eza --icons"
 alias claude-mem='bun "/Users/yining/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+alias ll='eza --icons -al'
 
 # -----------------------------
 # 9. Optional external integrations
