@@ -12,6 +12,9 @@ trust_level = "trusted"
 [projects."/Users/yining"]
 trust_level = "trusted"
 
+[projects."/Users/yining/programming/config/mini-config"]
+trust_level = "trusted"
+
 [marketplaces.openai-bundled]
 last_updated = "2026-08-26T18:43:14Z"
 source_type = "local"
@@ -23,8 +26,8 @@ source_type = "local"
 source = "/Users/yining/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.claude-plugins-official]
-last_updated = "2026-08-19T23:32:07Z"
-last_revision = "0fc2bb13a805969c14b0fe9398bad41db346d84e"
+last_updated = "2026-09-02T01:19:02Z"
+last_revision = "e18ff5086423bd9c21902ce3100dc4ecc84a668a"
 source_type = "git"
 source = "https://github.com/anthropics/claude-plugins-official.git"
 
