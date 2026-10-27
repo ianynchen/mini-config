@@ -128,8 +128,12 @@ export HEADROOM_HOST="127.0.0.1"
 export HEADROOM_MODE="cache"
 export HEADROOM_BACKEND="anthropic"
 export HEADROOM_TELEMETRY="off"
-export ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
+# export ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
 export ENABLE_TOOL_SEARCH="true"
 # <<< headroom persistent env <<<
 unalias go 2>/dev/null
 
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/yining/.local/bin:$PATH"
