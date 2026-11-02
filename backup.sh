@@ -136,8 +136,13 @@ if [[ "$(uname)" == "Darwin" ]]; then
   info "macOS defaults"
   try "macOS defaults" "$REPO_DIR/macos/defaults.sh" capture
   info "iterm2 prefs"
-  if defaults export com.googlecode.iterm2 \
-      "$REPO_DIR/iterm2/com.googlecode.iterm2.plist" 2>/dev/null; then
+  # defaults export exits 0 even when it can't write the file, so create the
+  # dir first and judge success by the plist actually existing.
+  mkdir -p "$REPO_DIR/iterm2"
+  rm -f "$REPO_DIR/iterm2/com.googlecode.iterm2.plist"
+  defaults export com.googlecode.iterm2 \
+    "$REPO_DIR/iterm2/com.googlecode.iterm2.plist" 2>/dev/null || true
+  if [[ -s "$REPO_DIR/iterm2/com.googlecode.iterm2.plist" ]]; then
     ok "iterm2 prefs"
   else
     fail "iterm2 prefs — none found (never ran iTerm2 on this machine?)"
