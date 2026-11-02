@@ -1,7 +1,11 @@
+# Parser generator
+brew "bison"
 # Isolated development environments using Docker
 brew "docker-compose"
 # Modern, maintained replacement for ls
 brew "eza"
+# Fast Lexical Analyzer, generates Scanners (tokenizers)
+brew "flex"
 # GitHub command-line tool
 brew "gh"
 # Audit git repos for secrets
@@ -18,8 +22,6 @@ brew "jq"
 brew "kotlin"
 # Kubernetes command-line interface
 brew "kubernetes-cli"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.14"
 # Java-based project management
 brew "maven"
 # Incremental parsing library
@@ -28,14 +30,26 @@ brew "tree-sitter"
 brew "neovim"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
+# Development kit for the Java programming language
+brew "openjdk@21"
+# Open-source vector similarity search for Postgres
+brew "pgvector"
+# Object-relational database system
+brew "postgresql@18", restart_service: :changed, link: true
 # Framework for managing multi-language pre-commit hooks
 brew "pre-commit"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
 # CLI proxy to minimize LLM token consumption
 brew "rtk"
 # Safe, concurrent, practical language
 brew "rust"
 # Terminal multiplexer
 brew "tmux"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
 # Parser generator tool
 brew "tree-sitter-cli"
 # Extremely fast Python package installer and resolver, written in Rust
@@ -46,3 +60,4 @@ cask "linearmouse"
 cask "orbstack"
 uv "headroom-ai[all]"
 uv "memorykit", with: ["mcp>=1.0, <2"], source: "git+https://gitlab.com/memorykit/memorykit.git"
+npm "pnpm"
